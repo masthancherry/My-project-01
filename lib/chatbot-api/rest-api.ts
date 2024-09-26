@@ -26,6 +26,7 @@ export interface ApiResolversProps {
   readonly filesBucket: s3.Bucket;
   readonly userFeedbackBucket: s3.Bucket;
   readonly modelsParameter: ssm.StringParameter;
+  readonly bedrockEnabledModelsParameter: ssm.StringParameter;
   readonly models: SageMakerModelEndpoint[];
   readonly api: appsync.GraphqlApi;
 }
@@ -65,6 +66,7 @@ export class ApiResolvers extends Construct {
           ...props.shared.defaultEnvironmentVariables,
           CONFIG_PARAMETER_NAME: props.shared.configParameter.parameterName,
           MODELS_PARAMETER_NAME: props.modelsParameter.parameterName,
+          BEDROCK_ENABLED_MODELS_PARAMETER_NAME: props.bedrockEnabledModelsParameter.parameterName,
           X_ORIGIN_VERIFY_SECRET_ARN:
             props.shared.xOriginVerifySecret.secretArn,
           API_KEYS_SECRETS_ARN: props.shared.apiKeysSecret.secretArn,
@@ -298,6 +300,7 @@ export class ApiResolvers extends Construct {
       props.shared.apiKeysSecret.grantRead(apiHandler);
       props.shared.configParameter.grantRead(apiHandler);
       props.modelsParameter.grantRead(apiHandler);
+      props.bedrockEnabledModelsParameter.grantRead(apiHandler);
       props.sessionsTable.grantReadWriteData(apiHandler);
       props.userFeedbackBucket.grantReadWrite(apiHandler);
       props.filesBucket.grantReadWrite(apiHandler);
